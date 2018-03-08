@@ -90,10 +90,14 @@
         </div>
     </footer>
 </div>
+<script>
+    Materialize.updateTextFields();
+</script>
 
 @inject HttpClient Http
 @using Whois.NET
-@using System.Net;
+@using System.Net
+@using Microsoft.AspNetCore.Blazor.Browser.Interop
 
 @functions{
     const string WhoisAPIEndPoint = "https://whois.azurewebsites.net";
@@ -104,7 +108,16 @@
 
     public string Encoding { get; set; } = "";
 
+    public string[] Encodings { get; private set; }
+
     public WhoisResponse Response { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        this.Encodings = await Http.GetJsonAsync<string[]>($"{WhoisAPIEndPoint}/api/encodings");
+        Console.WriteLine(this.Encodings);
+        RegisteredFunction.Invoke<object>("setupAutocompleteEncoding", this.Encodings as object);
+    }
 
     public async void Submit()
     {

@@ -17,5 +17,15 @@
     <script src="scripts/materialize.min.js"></script>
     <script type="blazor-boot">
     </script>
+    <script>
+        Blazor.registerFunction("setupAutocompleteEncoding", function (encodings) {
+            let data = encodings.reduce((d, enc) => (d[enc] = null, d), {});
+            $('input#encoding').autocomplete({
+                data: data,
+                limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
+                minLength: 0 // The minimum length of the input for the autocomplete to start. Default: 1.
+            });
+        })
+    </script>
 </body>
 </html>
