@@ -28,7 +28,14 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <button x-type="submit" class="blue btn btn-large waves-effect waves-light col s12" @onclick(Submit)>query</button>
+                        @if (this.FormValid)
+                        {
+                            <button class="blue btn btn-large waves-effect waves-light col s12" @onclick(Submit)>query</button>
+                        }
+                        else
+                        {
+                            <button disabled class="blue btn btn-large waves-effect waves-light col s12">query</button>
+                        }
                     </div>
                 </div>
             </form>
@@ -112,10 +119,15 @@
 
     public WhoisResponse Response { get; set; }
 
+    public bool FormValid { get => !string.IsNullOrWhiteSpace(this.Query); }
+
     protected override async Task OnInitAsync()
     {
         this.Encodings = await Http.GetJsonAsync<string[]>($"{WhoisAPIEndPoint}/api/encodings");
         Console.WriteLine(this.Encodings);
+
+        // 1. I wanna void version.
+        // 2. "RegisteredFunction.Invoke" has same issue? https://github.com/aspnet/SignalR/issues/1268
         RegisteredFunction.Invoke<object>("setupAutocompleteEncoding", this.Encodings as object);
     }
 
@@ -123,8 +135,14 @@
     {
         var query = WebUtility.UrlEncode(this.Query);
         var server = WebUtility.UrlEncode(this.Server);
+        if (string.IsNullOrWhiteSpace(this.Encoding))
+        {
+            this.Encoding = "utf-8";
+            RegisteredFunction.Invoke<object>("updateText");
+        }
         var encoding = WebUtility.UrlEncode(this.Encoding);
         this.Response = await Http.GetJsonAsync<WhoisResponse>($"{WhoisAPIEndPoint}/api/whois/{query}?encoding={encoding}&server={server}");
+
         StateHasChanged();
     }
 }

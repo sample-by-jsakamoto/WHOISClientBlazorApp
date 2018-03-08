@@ -26,6 +26,11 @@
                 minLength: 0 // The minimum length of the input for the autocomplete to start. Default: 1.
             });
         })
+        Blazor.registerFunction("updateText", function () {
+            setTimeout(() => {
+                Materialize.updateTextFields();
+            }, 0);
+        })
     </script>
 </body>
 </html>
