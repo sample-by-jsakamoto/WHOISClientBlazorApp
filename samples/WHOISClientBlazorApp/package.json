@@ -1,0 +1,20 @@
+{
+  "name": "whois-client-blazorapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "./node_modules/.bin/webpack -p -w"
+  },
+  "author": "",
+  "license": "GPLv2",
+  "devDependencies": {
+    "@types/jquery": "3.3.0",
+    "@types/webpack-env": "1.13.0",
+    "jquery": "3.3.1",
+    "materialize-css": "0.100.2",
+    "node-sass": "4.7.2",
+    "typescript": "2.4.2"
+  },
+  "dependencies": {}
+}

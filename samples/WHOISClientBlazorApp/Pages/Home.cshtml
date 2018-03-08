@@ -1,0 +1,119 @@
+﻿<div class="clipping">
+    <nav class="grey darken-2" role="navigation">
+        <div class="nav-wrapper container">
+            <div id="logo-container" class="brand-logo">WHOIS Client Blazor App</div>
+        </div>
+    </nav>
+
+    <div class="container section">
+        <div class="row">
+            <form name="queryform" class="col s12 m6 l5" novalidate>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" id="query" name="query" @bind(this.Query) placeholder="Domain or IP Address to query" required />
+                        <label for="query">Query</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" id="server" name="server" @bind(this.Server) placeholder="(optional) Host name or IP Address of whois server" />
+                        <label for="server">Whois server</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" name="encoding" id="encoding" @bind(this.Encoding) class="autocomplete" autocomplete="off" />
+                        <label for="encoding">Encoding</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button x-type="submit" class="blue btn btn-large waves-effect waves-light col s12" @onclick(Submit)>query</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="col s12 m6 l7 response">
+                <label>Response</label>
+                @if (this.Response != null)
+                {
+                    <div>
+                        <h4>Responded servers</h4>
+                        @if (this.Response.RespondedServers != null)
+                        {
+                            <div>@string.Join(" > ", Response.RespondedServers)</div>
+                        }
+                        <h4>IP address range</h4>
+                        @if (this.Response.AddressRange != null)
+                        {
+                            <div>@Response.AddressRange.Begin - @Response.AddressRange.End</div>
+                        }
+                        <h4>Organization name</h4>
+                        <div>@Response.OrganizationName</div>
+                        <h4>Raw response text</h4>
+                        <pre>@Response.Raw</pre>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer grey darken-2">
+        <div class="container">
+            <div class="row">
+                <div class="col m4 s12">
+                    <!-- Reference to API -->
+                </div>
+                <div class="col m4 s12">
+                    <h5 class="grey-text text-lighten-1">Powered by</h5>
+                    <ul>
+                        <li>
+                            <a target="_blank" class="grey-text text-lighten-1" href="https://www.nuget.org/packages/WhoisClient.NET/">
+                                <span>WhoisClient.NET</span>
+                                <img src="https://img.shields.io/nuget/v/WhoisClient.NET.svg" alt="WhoisClient.NET NuGet Package latest version" />
+                            </a>
+                        </li>
+                        <li><a target="_blank" class="grey-text" href="http://materializecss.com/">Materialize</a></li>
+                    </ul>
+                </div>
+                <div class="col m4 s12">
+                    <div>
+                        <!-- Share Twitter -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                GNU GPL v2 | Source code on <a target="_blank" class="grey-text text-lighten-4" href="https://github.com/jsakamoto/WHOISClientBlazorApp/">GitHub</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+@inject HttpClient Http
+@using Whois.NET
+@using System.Net;
+
+@functions{
+    const string WhoisAPIEndPoint = "https://whois.azurewebsites.net";
+
+    public string SiteBase { get; set; } = "";
+
+    public string Query { get; set; } = "";
+
+    public string Server { get; set; } = "";
+
+    public string Encoding { get; set; } = "";
+
+    public WhoisResponse Response { get; set; }
+
+    public async void Submit()
+    {
+        var query = WebUtility.UrlEncode(this.Query);
+        var server = WebUtility.UrlEncode(this.Server);
+        var encoding = WebUtility.UrlEncode(this.Encoding);
+        this.Response = await Http.GetJsonAsync<WhoisResponse>($"{WhoisAPIEndPoint}/api/whois/{query}?encoding={encoding}&server={server}");
+        StateHasChanged();
+    }
+}

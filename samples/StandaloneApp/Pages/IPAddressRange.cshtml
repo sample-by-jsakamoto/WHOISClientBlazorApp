@@ -1,0 +1,36 @@
+﻿
+
+<p>
+    <label for="ipaddress-range-text">IPAddress Range Text:</label>
+    <input id="ipaddress-range-text" @bind(this.IPAddressRangeText) class="form-control" />
+</p>
+<p>
+    <label for="ipaddress-to-check">IPAddress to check:</label>
+    <input id="ipaddress-to-check" @bind(this.IPAddressToCheck) class="form-control" />
+</p>
+
+<p>
+    <button @onclick(this.ContainsCheck)>Contains?</button>
+</p>
+
+<p>
+    <label>Result:</label>
+    <span>@CheckResult</span>
+</p>
+
+
+@functions {
+
+    public string IPAddressRangeText { get; set; }
+
+    public string IPAddressToCheck { get; set; }
+
+    public string CheckResult { get; set; } = "N/A";
+
+    public void ContainsCheck()
+    {
+        var range = NetTools.IPAddressRange.Parse(this.IPAddressRangeText);
+        var contains = range.Contains(System.Net.IPAddress.Parse(this.IPAddressToCheck));
+        this.CheckResult = contains ? "Yes, Contains." : "No.";
+    }
+}

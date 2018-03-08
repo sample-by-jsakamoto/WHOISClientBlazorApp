@@ -5,10 +5,13 @@
 <button @onclick(IncrementCount)>Click me</button>
 
 @functions {
+
+    public int Step { get; set; } = 1;
+
     int currentCount = 0;
 
     void IncrementCount()
     {
-        currentCount++;
+        currentCount += this.Step;
     }
 }
