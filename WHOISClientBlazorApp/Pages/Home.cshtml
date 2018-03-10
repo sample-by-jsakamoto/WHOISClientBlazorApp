@@ -124,6 +124,9 @@
 
     protected override async Task OnInitAsync()
     {
+        // This is cause exception.
+        // await base.OnInitAsync();
+
         this.Encodings = await Http.GetJsonAsync<string[]>($"{WhoisAPIEndPoint}/api/encodings");
         Console.WriteLine(this.Encodings);
 
