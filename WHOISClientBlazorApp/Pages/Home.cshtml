@@ -102,9 +102,10 @@
 </script>
 
 @inject HttpClient Http
-@using Whois.NET
 @using System.Net
 @using Microsoft.AspNetCore.Blazor.Browser.Interop
+@using Whois.NET
+@using Newtonsoft.Json
 
 @functions{
     const string WhoisAPIEndPoint = "https://whois.azurewebsites.net";
@@ -141,7 +142,10 @@
             RegisteredFunction.Invoke<object>("updateText");
         }
         var encoding = WebUtility.UrlEncode(this.Encoding);
-        this.Response = await Http.GetJsonAsync<WhoisResponse>($"{WhoisAPIEndPoint}/api/whois/{query}?encoding={encoding}&server={server}");
+        var rawResponse = await Http.GetStringAsync($"{WhoisAPIEndPoint}/api/whois/{query}?encoding={encoding}&server={server}");
+
+        // DEBUG: Console.WriteLine($"rawResponse is [{rawResponse}]");
+        this.Response = JsonConvert.DeserializeObject<WhoisResponse>(rawResponse);
 
         StateHasChanged();
     }
